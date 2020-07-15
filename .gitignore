@@ -1,0 +1,20 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+.build
+.env.yml
+
+# Webpack directories
+.webpack
+
+# DynamoDB Local directories
+.dynamodb
+
+# Test coverage directories
+coverage
+
+# VS Code config file
+.vscode/settings.json
