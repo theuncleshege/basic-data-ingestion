@@ -1,5 +1,5 @@
 import { NotificationAttributes } from '~/types';
-import NotificationService from '~/services/NotificationService/NotificationService';
+import NotificationService from '~/services/Notification/NotificationService';
 import { SNS } from 'aws-sdk';
 import { PublishInput } from 'aws-sdk/clients/sns';
 

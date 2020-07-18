@@ -1,18 +1,57 @@
 import { mocked } from 'ts-jest/utils';
 import eventBodyGenerator from '~/__tests__/helpers/eventBodyGenerator';
 import { isApiGatewayResponse } from '~/__tests__/helpers/validators';
-import SNSNotificationService from '~/services/NotificationService/SNS/SNSNotificationService';
+import SNSNotificationService from '~/services/Notification/SNS/SNSNotificationService';
 import storeSensorData from '~/functions/data/store';
 import getSensorData from '~/functions/data/get';
 import storeThreshold from '~/functions/threshold/store';
+import { DynamoDB } from 'aws-sdk';
+import { getDbOptions } from '~/connections/DynamoDB/DynamoDBConnection';
 
-jest.mock('~/services/NotificationService/SNS/SNSNotificationService');
+jest.mock('~/services/Notification/SNS/SNSNotificationService');
 
 const mockedSNSNotificationService = mocked(SNSNotificationService, true);
 
 beforeAll(() => {
   jest.setTimeout(15000);
 });
+
+beforeEach(async () => {
+  return await emptyDynamoDBTables();
+});
+
+const emptyDynamoDBTables = async () => {
+  const dynamoDB = new DynamoDB(getDbOptions());
+  const dynamoDBClient = new DynamoDB.DocumentClient(getDbOptions());
+  const dbTables = [process.env.PACKET_TABLE, process.env.THRESHOLD_TABLE];
+
+  for (const table of dbTables) {
+    if (table) {
+      await dynamoDB
+        .scan({ TableName: table }, async (_, data) => {
+          if (data && data.Items) {
+            for (const item of data.Items) {
+              let filters: { [name: string]: any } = {
+                sensorId: item.sensorId.S,
+              };
+
+              if (table === process.env.PACKET_TABLE && item.time.N) {
+                filters = { ...filters, time: parseInt(item.time.N) };
+              }
+
+              const params = {
+                TableName: table,
+                Key: filters,
+              };
+
+              await dynamoDBClient.delete(params).promise();
+            }
+          }
+        })
+        .promise();
+    }
+  }
+};
 
 describe('Lambda tests', () => {
   describe('Save packet data', () => {
@@ -32,12 +71,16 @@ describe('Lambda tests', () => {
       expect(result).toMatchObject({ statusCode: 400 });
     });
 
-    it('should accept a sensor value of zero', async () => {
+    it('should store sensor data, even with value of zero', async () => {
+      const sensorId = 'testsensorId';
+      const time = 300;
+      const value = 0;
+
       const event = eventBodyGenerator({
         body: {
-          sensorId: 'device',
-          time: 500,
-          value: 0,
+          sensorId,
+          time,
+          value,
         },
       });
 

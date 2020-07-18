@@ -1,17 +1,15 @@
-import DBConnection from '~/connections/DBConnection';
-import NotificationService from '~/services/NotificationService/NotificationService';
+import NotificationService from '~/services/Notification/NotificationService';
 import { parseAndValidateRequest, response } from '~/common/helpers/helpers';
-import SNSNotificationService from '~/services/NotificationService/SNS/SNSNotificationService';
+import SNSNotificationService from '~/services/Notification/SNS/SNSNotificationService';
 import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
-import PacketRepository from '~/repositories/Packet/PacketRepository';
-import ThresholdRepository from '~/repositories/Threshold/ThresholdRepository';
 import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
 import AWSErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
+import PacketService from '~/services/Packet/PacketService';
 
 const storeFunctionFactory = (
-  dbConnection: DBConnection,
-  notificationService: NotificationService,
+  dbConnection: DynamoDBConnection,
   errorHandler: ErrorHandler,
+  notificationService: NotificationService,
 ) => async (event: any): Promise<any> => {
   const validationMap = {
     sensorId: 'string',
@@ -20,23 +18,19 @@ const storeFunctionFactory = (
   };
 
   try {
-    const packetRepository = new PacketRepository(dbConnection);
-    const thresholdRepository = new ThresholdRepository(dbConnection);
-
     const { sensorId, time, value } = parseAndValidateRequest(
       event,
       validationMap,
     );
 
-    await packetRepository.savePacket({ sensorId, time, value });
-    const { Item } = await thresholdRepository.getThreshold({ sensorId });
+    const packetService = new PacketService(dbConnection);
 
-    if (Item && isThresholdTripped(value, Item.threshold)) {
-      const body = `Threshold tripped for ${sensorId}. Limit is ${Item.threshold} but the value received was ${value}.`;
-      const subject = `Threshold for ${sensorId} Tripped!!!`;
-
-      await notificationService.notify({ body, subject });
-    }
+    await packetService.save({ sensorId, time, value });
+    await packetService.notifyIfThresholdIsTripped(
+      notificationService,
+      sensorId,
+      value,
+    );
 
     return response(204);
   } catch (e) {
@@ -44,20 +38,10 @@ const storeFunctionFactory = (
   }
 };
 
-const isThresholdTripped = (value: number, threshold: number): boolean => {
-  if (
-    (threshold < 0 && value < threshold) ||
-    (threshold > 0 && value > threshold)
-  ) {
-    return true;
-  }
-  return false;
-};
-
 export const store = storeFunctionFactory(
   new DynamoDBConnection(),
-  new SNSNotificationService(),
   new AWSErrorHandler(),
+  new SNSNotificationService(),
 );
 
 export default store;

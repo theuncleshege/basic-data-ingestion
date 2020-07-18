@@ -29,11 +29,11 @@ describe('PacketRepository Tests', () => {
       until: 1594635590163,
     };
 
-    const packetRepositoryDefaultName = new PacketRepository(
+    const packetRepositoryDefaultTableName = new PacketRepository(
       mockedDynamoDBConnection.prototype,
     );
 
-    await packetRepositoryDefaultName.getPacket(query);
+    await packetRepositoryDefaultTableName.get(query);
 
     const dbGetMethod = mockedDynamoDBConnection.prototype.query;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
@@ -49,7 +49,7 @@ describe('PacketRepository Tests', () => {
       until: 1594635590163,
     };
 
-    await packetRepository.getPacket(query);
+    await packetRepository.get(query);
 
     const dbGetMethod = mockedDynamoDBConnection.prototype.query;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
@@ -63,7 +63,7 @@ describe('PacketRepository Tests', () => {
       value: 5.8,
     };
 
-    await packetRepository.savePacket(data);
+    await packetRepository.save(data);
 
     const dbSaveMethod = mockedDynamoDBConnection.prototype.create;
     expect(dbSaveMethod).toHaveBeenCalledTimes(1);

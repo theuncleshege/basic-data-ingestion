@@ -3,7 +3,7 @@ import { response, parseAndValidateRequest } from '~/common/helpers/helpers';
 import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
 import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
 import AWSErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
-import ThresholdRepository from '~/repositories/Threshold/ThresholdRepository';
+import ThresholdService from '~/services/Threshold/ThresholdService';
 
 export const storeFunctionFactory = (
   dbConnection: DBConnection,
@@ -15,13 +15,13 @@ export const storeFunctionFactory = (
   };
 
   try {
-    const thresholdRepository = new ThresholdRepository(dbConnection);
+    const thresholdService = new ThresholdService(dbConnection);
 
     const { sensorId, threshold } = parseAndValidateRequest(
       event,
       validationMap,
     );
-    await thresholdRepository.saveThreshold({ sensorId, threshold });
+    await thresholdService.save({ sensorId, threshold });
 
     return response(204);
   } catch (e) {

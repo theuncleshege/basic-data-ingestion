@@ -33,7 +33,7 @@ describe('ThresholdRepository Tests', () => {
       mockedDynamoDBConnection.prototype,
     );
 
-    await thresholdRepositoryDefaultTableName.getThreshold(query);
+    await thresholdRepositoryDefaultTableName.get(query);
 
     const dbGetMethod = mockedDynamoDBConnection.prototype.get;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
@@ -50,7 +50,7 @@ describe('ThresholdRepository Tests', () => {
       sensorId: 'device-123456',
     };
 
-    await thresholdRepository.getThreshold(query);
+    await thresholdRepository.get(query);
 
     const dbGetMethod = mockedDynamoDBConnection.prototype.get;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
@@ -63,7 +63,7 @@ describe('ThresholdRepository Tests', () => {
       threshold: 5.8,
     };
 
-    await thresholdRepository.saveThreshold(data);
+    await thresholdRepository.save(data);
 
     const dbSaveMethod = mockedDynamoDBConnection.prototype.create;
     expect(dbSaveMethod).toHaveBeenCalledTimes(1);

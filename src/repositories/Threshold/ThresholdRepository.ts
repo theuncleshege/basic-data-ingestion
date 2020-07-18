@@ -11,14 +11,14 @@ export default class ThresholdRepository extends Repository {
     this.dbConnection = dbConnection;
   }
 
-  async getThreshold(queryParams: ThresholdQueryParams) {
+  public async get(queryParams: ThresholdQueryParams) {
     return this.dbConnection.get({
       tableName: this.tableName,
       ...queryParams,
     });
   }
 
-  async saveThreshold(data: ThresholdData) {
+  public async save(data: ThresholdData) {
     return this.dbConnection.create({ tableName: this.tableName, ...data });
   }
 }

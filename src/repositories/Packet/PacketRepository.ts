@@ -11,14 +11,14 @@ export default class PacketRepository extends Repository {
     this.dbConnection = dbConnection;
   }
 
-  async getPacket(queryParams: PacketQueryParams) {
+  async get(queryParams: PacketQueryParams) {
     return this.dbConnection.query({
       tableName: this.tableName,
       ...queryParams,
     });
   }
 
-  async savePacket(data: PacketData) {
+  async save(data: PacketData) {
     return this.dbConnection.create({ tableName: this.tableName, ...data });
   }
 }

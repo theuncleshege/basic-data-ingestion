@@ -1,12 +1,11 @@
-import DBConnection from '~/connections/DBConnection';
 import { response, parseAndValidateRequest } from '~/common/helpers/helpers';
 import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
-import PacketRepository from '~/repositories/Packet/PacketRepository';
 import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
 import AWSErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
+import PacketService from '~/services/Packet/PacketService';
 
 export const getFunctionFactory = (
-  dbConnection: DBConnection,
+  dbConnection: DynamoDBConnection,
   errorHandler: ErrorHandler,
 ) => async (event: any): Promise<any> => {
   const validationMap = {
@@ -27,9 +26,8 @@ export const getFunctionFactory = (
       validationMap,
     );
 
-    const packetRepository = new PacketRepository(dbConnection);
-
-    const result = await packetRepository.getPacket({ sensorId, since, until });
+    const packetService = new PacketService(dbConnection);
+    const result = await packetService.get({ sensorId, since, until });
 
     return response(200, result.Items);
   } catch (e) {
