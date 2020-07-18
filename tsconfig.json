@@ -25,7 +25,13 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "@DBConnections/*": ["src/databases/*"],
+      "@Functions/*": ["src/functions/*"],
+      "@Repositories/*": ["src/repositories/*"],
+      "@Services/*": ["src/services/*"],
+      "@Shared/*": ["src/shared/*"],
+      "@Tests/*": ["src/__tests__/*"]
     }
   },
   "include": ["./**/*"],

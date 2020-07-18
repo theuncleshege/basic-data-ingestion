@@ -1,8 +1,8 @@
-import PacketRepository from '~/repositories/Packet/PacketRepository';
-import DBConnection from '~/connections/DBConnection';
+import PacketRepository from '@Repositories/Packet/PacketRepository';
+import DBConnection from '@DBConnections/DBConnection';
+import ThresholdService from '@Services/Threshold/ThresholdService';
+import NotificationService from '@Services/Notification/NotificationService';
 import { PacketData, PacketQueryParams } from '~/types';
-import ThresholdService from '../Threshold/ThresholdService';
-import NotificationService from '../Notification/NotificationService';
 
 export default class PacketService {
   private packetRepository: PacketRepository;

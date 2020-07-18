@@ -1,4 +1,4 @@
-import { response, parseAndValidateRequest } from '~/common/helpers/helpers';
+import { response, parseAndValidateRequest } from '@Shared/helpers/helpers';
 
 describe('Helper Functions Tests', () => {
   it('should return valid response object', () => {

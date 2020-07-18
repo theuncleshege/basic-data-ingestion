@@ -2,7 +2,7 @@ import * as AWSMock from 'aws-sdk-mock';
 import AWS from 'aws-sdk';
 import SNSNotificationService, {
   getSNSOptions,
-} from '~/services/Notification/SNS/SNSNotificationService';
+} from '@Services/Notification/SNS/SNSNotificationService';
 import { NotificationAttributes } from '~/types';
 
 describe('SNSNotificationService Tests', () => {

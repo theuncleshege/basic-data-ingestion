@@ -1,8 +1,8 @@
-import PacketRepository from '~/repositories/Packet/PacketRepository';
+import PacketRepository from '@Repositories/Packet/PacketRepository';
 import { mocked } from 'ts-jest/utils';
-import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
+import DynamoDBConnection from '@DBConnections/DynamoDB/DynamoDBConnection';
 
-jest.mock('~/connections/DynamoDB/DynamoDBConnection');
+jest.mock('@DBConnections/DynamoDB/DynamoDBConnection');
 
 const mockedDynamoDBConnection = mocked(DynamoDBConnection, true);
 

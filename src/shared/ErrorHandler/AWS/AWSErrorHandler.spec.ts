@@ -1,7 +1,7 @@
-import ValidationError from '~/common/errors/ValidationError';
-import { parseAndValidateRequest } from '~/common/helpers/helpers';
-import ErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
-import eventBodyGenerator from '~/__tests__/helpers/eventBodyGenerator';
+import ValidationError from '@Shared/errors/ValidationError';
+import { parseAndValidateRequest } from '@Shared/helpers/helpers';
+import ErrorHandler from '@Shared/ErrorHandler/AWS/AWSErrorHandler';
+import eventBodyGenerator from '@Tests/helpers/eventBodyGenerator';
 
 describe('ErrorHandler Tests', () => {
   it('should return proper error message for duplicate entires', () => {

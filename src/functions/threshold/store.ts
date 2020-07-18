@@ -1,9 +1,9 @@
-import DBConnection from '~/connections/DBConnection';
-import { response, parseAndValidateRequest } from '~/common/helpers/helpers';
-import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
-import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
-import AWSErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
-import ThresholdService from '~/services/Threshold/ThresholdService';
+import DBConnection from '@DBConnections/DBConnection';
+import { response, parseAndValidateRequest } from '@Shared/helpers/helpers';
+import DynamoDBConnection from '@DBConnections/DynamoDB/DynamoDBConnection';
+import ErrorHandler from '@Shared/ErrorHandler/ErrorHandler';
+import AWSErrorHandler from '@Shared/ErrorHandler/AWS/AWSErrorHandler';
+import ThresholdService from '@Services/Threshold/ThresholdService';
 
 export const storeFunctionFactory = (
   dbConnection: DBConnection,

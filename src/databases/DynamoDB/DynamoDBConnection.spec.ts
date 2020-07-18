@@ -1,4 +1,4 @@
-import { getDbOptions } from '~/connections/DynamoDB/DynamoDBConnection';
+import { getDbOptions } from '@DBConnections/DynamoDB/DynamoDBConnection';
 
 describe('DynamoDBConnection Tests', () => {
   it('should return correct testing db config', () => {

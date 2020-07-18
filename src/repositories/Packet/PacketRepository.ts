@@ -1,6 +1,6 @@
 import { PacketData, PacketQueryParams } from '~/types';
-import DBConnection from '~/connections/DBConnection';
-import Repository from '~/repositories/Repository';
+import DBConnection from '@DBConnections/DBConnection';
+import Repository from '@Repositories/Repository';
 
 export default class PacketRepository extends Repository {
   private dbConnection: DBConnection;

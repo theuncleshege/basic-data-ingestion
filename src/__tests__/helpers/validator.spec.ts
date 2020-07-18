@@ -1,4 +1,4 @@
-import { isApiGatewayResponse } from '~/__tests__/helpers/validators';
+import { isApiGatewayResponse } from '@Tests/helpers/validators';
 
 describe('Validator test helper tests', () => {
   it('should return false if body, headers or statusCode is empty', () => {

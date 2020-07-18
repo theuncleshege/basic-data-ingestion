@@ -1,6 +1,6 @@
-import DBConnection from '~/connections/DBConnection';
-
 import { DynamoDB } from 'aws-sdk';
+
+import DBConnection from '@DBConnections/DBConnection';
 
 import {
   PacketQueryParams,

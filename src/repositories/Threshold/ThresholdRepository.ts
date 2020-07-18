@@ -1,6 +1,6 @@
 import { ThresholdData, ThresholdQueryParams } from '~/types';
-import Repository from '~/repositories/Repository';
-import DBConnection from '~/connections/DBConnection';
+import Repository from '@Repositories/Repository';
+import DBConnection from '@DBConnections/DBConnection';
 
 export default class ThresholdRepository extends Repository {
   private dbConnection: DBConnection;

@@ -1,8 +1,8 @@
-import { response, parseAndValidateRequest } from '~/common/helpers/helpers';
-import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
-import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
-import AWSErrorHandler from '~/common/ErrorHandler/AWS/AWSErrorHandler';
-import PacketService from '~/services/Packet/PacketService';
+import { response, parseAndValidateRequest } from '@Shared/helpers/helpers';
+import DynamoDBConnection from '@DBConnections/DynamoDB/DynamoDBConnection';
+import ErrorHandler from '@Shared/ErrorHandler/ErrorHandler';
+import AWSErrorHandler from '@Shared/ErrorHandler/AWS/AWSErrorHandler';
+import PacketService from '@Services/Packet/PacketService';
 
 export const getFunctionFactory = (
   dbConnection: DynamoDBConnection,

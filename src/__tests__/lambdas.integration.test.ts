@@ -1,14 +1,14 @@
 import { mocked } from 'ts-jest/utils';
-import eventBodyGenerator from '~/__tests__/helpers/eventBodyGenerator';
-import { isApiGatewayResponse } from '~/__tests__/helpers/validators';
-import SNSNotificationService from '~/services/Notification/SNS/SNSNotificationService';
-import storeSensorData from '~/functions/data/store';
-import getSensorData from '~/functions/data/get';
-import storeThreshold from '~/functions/threshold/store';
+import eventBodyGenerator from '@Tests/helpers/eventBodyGenerator';
+import { isApiGatewayResponse } from '@Tests/helpers/validators';
+import SNSNotificationService from '@Services/Notification/SNS/SNSNotificationService';
+import storeSensorData from '@Functions/data/store';
+import getSensorData from '@Functions/data/get';
+import storeThreshold from '@Functions/threshold/store';
 import { DynamoDB } from 'aws-sdk';
-import { getDbOptions } from '~/connections/DynamoDB/DynamoDBConnection';
+import { getDbOptions } from '@DBConnections/DynamoDB/DynamoDBConnection';
 
-jest.mock('~/services/Notification/SNS/SNSNotificationService');
+jest.mock('@Services/Notification/SNS/SNSNotificationService');
 
 const mockedSNSNotificationService = mocked(SNSNotificationService, true);
 

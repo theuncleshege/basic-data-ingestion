@@ -1,4 +1,4 @@
-import ValidationError from '~/common/errors/ValidationError';
+import ValidationError from '@Shared/errors/ValidationError';
 
 export const response = (
   statusCode: number,

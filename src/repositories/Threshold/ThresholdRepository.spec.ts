@@ -1,8 +1,8 @@
-import ThresholdRepository from '~/repositories/Threshold/ThresholdRepository';
+import ThresholdRepository from '@Repositories/Threshold/ThresholdRepository';
 import { mocked } from 'ts-jest/utils';
-import DynamoDBConnection from '~/connections/DynamoDB/DynamoDBConnection';
+import DynamoDBConnection from '@DBConnections/DynamoDB/DynamoDBConnection';
 
-jest.mock('~/connections/DynamoDB/DynamoDBConnection');
+jest.mock('@DBConnections/DynamoDB/DynamoDBConnection');
 
 const mockedDynamoDBConnection = mocked(DynamoDBConnection, true);
 

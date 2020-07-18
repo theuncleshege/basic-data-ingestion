@@ -1,8 +1,8 @@
 import { APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
-import ValidationError from '~/common/errors/ValidationError';
+import ValidationError from '@Shared/errors/ValidationError';
 import { ErrorWithCodeProp } from '~/types';
-import { response } from '~/common/helpers/helpers';
-import ErrorHandler from '~/common/ErrorHandler/ErrorHandler';
+import { response } from '@Shared/helpers/helpers';
+import ErrorHandler from '@Shared/ErrorHandler/ErrorHandler';
 
 export default class AWSErrorHandler implements ErrorHandler {
   public handle(
