@@ -6,6 +6,7 @@ jspm_packages
 .serverless
 .build
 .env.yml
+.env
 
 # Webpack directories
 .webpack

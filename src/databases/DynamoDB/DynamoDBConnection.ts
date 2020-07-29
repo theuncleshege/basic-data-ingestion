@@ -12,16 +12,16 @@ import {
 
 export const getDbOptions = (): { [name: string]: any } => {
   let options = {};
-  if (process.env.IS_OFFLINE) {
-    options = {
-      endpoint: 'http://localhost:8000',
-      region: 'localhost',
-    };
-  } else if (process.env.JEST_WORKER_ID) {
+  if (process.env.JEST_WORKER_ID) {
     options = {
       endpoint: 'localhost:8000',
       region: 'local-env',
       sslEnabled: false,
+    };
+  } else if (process.env.IS_OFFLINE || process.env.NODE_ENV !== 'production') {
+    options = {
+      endpoint: 'http://localhost:8000',
+      region: 'localhost',
     };
   }
 

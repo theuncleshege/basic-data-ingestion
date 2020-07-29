@@ -46,6 +46,8 @@ describe('SNSNotificationService Config Tests', () => {
   });
 
   it('should return correct offline sns config', () => {
+    const jestWotkerId = process.env.JEST_WORKER_ID;
+    process.env.JEST_WORKER_ID = '';
     process.env.IS_OFFLINE = 'true';
 
     const options = getSNSOptions();
@@ -56,16 +58,20 @@ describe('SNSNotificationService Config Tests', () => {
     });
 
     process.env.IS_OFFLINE = '';
+    process.env.JEST_WORKER_ID = jestWotkerId;
   });
 
   it('should return empty sns config', () => {
     const jestWotkerId = process.env.JEST_WORKER_ID;
+    const nodeEnv = process.env.NODE_ENV;
     process.env.JEST_WORKER_ID = '';
+    process.env.NODE_ENV = 'production';
 
     const options = getSNSOptions();
 
     expect(options).toMatchObject({});
 
     process.env.JEST_WORKER_ID = jestWotkerId;
+    process.env.JEST_WORKER_ID = nodeEnv;
   });
 });

@@ -2,9 +2,9 @@ import { mocked } from 'ts-jest/utils';
 import eventBodyGenerator from '@Tests/helpers/eventBodyGenerator';
 import { isApiGatewayResponse } from '@Tests/helpers/validators';
 import SNSNotificationService from '@Services/Notification/SNS/SNSNotificationService';
-import storeSensorData from '@Functions/data/store';
-import getSensorData from '@Functions/data/get';
-import storeThreshold from '@Functions/threshold/store';
+import { storePacketWithServerless } from '@Functions/data/store';
+import { getPacketWithServerless } from '@Functions/data/get';
+import { storeThresholdWithServerless } from '@Functions/threshold/store';
 import { DynamoDB } from 'aws-sdk';
 import { getDbOptions } from '@DBConnections/DynamoDB/DynamoDBConnection';
 
@@ -53,7 +53,7 @@ const emptyDynamoDBTables = async () => {
   }
 };
 
-describe('Lambda tests', () => {
+describe('Serverless Functions tests', () => {
   describe('Save packet data', () => {
     it('should return 400 when request body is invalid', async () => {
       const event = eventBodyGenerator({
@@ -64,7 +64,7 @@ describe('Lambda tests', () => {
         },
       });
 
-      const result = await storeSensorData(event);
+      const result = await storePacketWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -84,7 +84,7 @@ describe('Lambda tests', () => {
         },
       });
 
-      const result = await storeSensorData(event);
+      const result = await storePacketWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -104,7 +104,7 @@ describe('Lambda tests', () => {
         },
       });
 
-      const result = await storeSensorData(event);
+      const result = await storePacketWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -140,10 +140,10 @@ describe('Lambda tests', () => {
         queryStringObject: { since: 200, until: 400 },
       });
 
-      await storeSensorData(event1);
-      await storeSensorData(event2);
+      await storePacketWithServerless(event1);
+      await storePacketWithServerless(event2);
 
-      const result = await getSensorData(getSensorDataEvent);
+      const result = await getPacketWithServerless(getSensorDataEvent);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -164,7 +164,7 @@ describe('Lambda tests', () => {
         queryStringObject: { since: 0, until: 400 },
       });
 
-      const result = await getSensorData(getSensorDataEvent);
+      const result = await getPacketWithServerless(getSensorDataEvent);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -178,16 +178,16 @@ describe('Lambda tests', () => {
   describe('Save threshold data', () => {
     it('should return 204 when threshold successfully saved', async () => {
       const sensorId = 'testid';
-      const thresholdValue = 2.8;
+      const threshold = 2.8;
 
       const event = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      const result = await storeThreshold(event);
+      const result = await storeThresholdWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -196,16 +196,16 @@ describe('Lambda tests', () => {
 
     it('should accept a threshold value of zero', async () => {
       const sensorId = 'testidse';
-      const thresholdValue = 0;
+      const threshold = 0;
 
       const event = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      const result = await storeThreshold(event);
+      const result = await storeThresholdWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -214,16 +214,16 @@ describe('Lambda tests', () => {
 
     it('should return 400 when threshold request is invalid', async () => {
       const sensorId = 'testidse';
-      const thresholdValue = 'ththd';
+      const threshold = 'ththd';
 
       const event = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      const result = await storeThreshold(event);
+      const result = await storeThresholdWithServerless(event);
 
       expect(result).toBeDefined();
       expect(isApiGatewayResponse(result)).toBe(true);
@@ -241,7 +241,7 @@ describe('Lambda tests', () => {
       const sensorId = 'testsensorId1';
       const time = 13423435435;
       const value = 10.5;
-      const thresholdValue = 8.9;
+      const threshold = 8.9;
 
       const sensorEvent = eventBodyGenerator({
         body: {
@@ -254,14 +254,14 @@ describe('Lambda tests', () => {
       const thresholdEvent = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      await storeThreshold(thresholdEvent);
-      await storeSensorData(sensorEvent);
+      await storeThresholdWithServerless(thresholdEvent);
+      await storePacketWithServerless(sensorEvent);
 
-      const body = `Threshold tripped for ${sensorId}. Limit is ${thresholdValue} but the value received was ${value}.`;
+      const body = `Threshold tripped for ${sensorId}. Limit is ${threshold} but the value received was ${value}.`;
       const subject = `Threshold for ${sensorId} Tripped!!!`;
 
       const notifyMethod = mockedSNSNotificationService.prototype.notify;
@@ -273,7 +273,7 @@ describe('Lambda tests', () => {
       const sensorId = 'testsensorId2';
       const time = 594873842;
       const value = -15.2;
-      const thresholdValue = -7.5;
+      const threshold = -7.5;
 
       const sensorEvent = eventBodyGenerator({
         body: {
@@ -286,14 +286,14 @@ describe('Lambda tests', () => {
       const thresholdEvent = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      await storeThreshold(thresholdEvent);
-      await storeSensorData(sensorEvent);
+      await storeThresholdWithServerless(thresholdEvent);
+      await storePacketWithServerless(sensorEvent);
 
-      const body = `Threshold tripped for ${sensorId}. Limit is ${thresholdValue} but the value received was ${value}.`;
+      const body = `Threshold tripped for ${sensorId}. Limit is ${threshold} but the value received was ${value}.`;
       const subject = `Threshold for ${sensorId} Tripped!!!`;
 
       const notifyMethod = mockedSNSNotificationService.prototype.notify;
@@ -305,7 +305,7 @@ describe('Lambda tests', () => {
       const sensorId = 'testsensorId3';
       const time = 564564565;
       const value = 5.3;
-      const thresholdValue = 8.9;
+      const threshold = 8.9;
 
       const sensorEvent = eventBodyGenerator({
         body: {
@@ -318,12 +318,12 @@ describe('Lambda tests', () => {
       const thresholdEvent = eventBodyGenerator({
         body: {
           sensorId,
-          threshold: thresholdValue,
+          threshold,
         },
       });
 
-      await storeThreshold(thresholdEvent);
-      await storeSensorData(sensorEvent);
+      await storeThresholdWithServerless(thresholdEvent);
+      await storePacketWithServerless(sensorEvent);
 
       const notifyMethod = mockedSNSNotificationService.prototype.notify;
       expect(notifyMethod).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 module.exports = {
   tables: [
     {
-      TableName: 'Packet_Test',
+      TableName: 'packet',
       KeySchema: [
         { AttributeName: 'sensorId', KeyType: 'HASH' },
         { AttributeName: 'time', KeyType: 'RANGE' },
@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     {
-      TableName: 'Threshold_Test',
+      TableName: 'threshold',
       KeySchema: [{ AttributeName: 'sensorId', KeyType: 'HASH' }],
       AttributeDefinitions: [{ AttributeName: 'sensorId', AttributeType: 'S' }],
       ProvisionedThroughput: {

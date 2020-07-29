@@ -23,6 +23,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"],

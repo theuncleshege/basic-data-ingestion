@@ -1,13 +1,22 @@
-import { getDbOptions } from '@DBConnections/DynamoDB/DynamoDBConnection';
+import { getDbOptions } from '@DBConnections/PostgreSQLDB/PostgreSQLDBConnection';
 
-describe('DynamoDBConnection Tests', () => {
+describe('PostgreSQLDBConnection Tests', () => {
+  const defaultDbOptions = {
+    type: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'postgres',
+    password: 'root',
+    database: 'backendexercise',
+    logging: false,
+  };
+
   it('should return correct testing db config', () => {
     const options = getDbOptions();
 
     expect(options).toMatchObject({
-      endpoint: 'localhost:8000',
-      region: 'local-env',
-      sslEnabled: false,
+      ...defaultDbOptions,
+      database: 'test',
     });
   });
 
@@ -19,15 +28,15 @@ describe('DynamoDBConnection Tests', () => {
     const options = getDbOptions();
 
     expect(options).toMatchObject({
-      endpoint: 'http://localhost:8000',
-      region: 'localhost',
+      ...defaultDbOptions,
+      synchronize: true,
     });
 
     process.env.IS_OFFLINE = '';
     process.env.JEST_WORKER_ID = jestWotkerId;
   });
 
-  it('should return empty db config', () => {
+  it('should return correct default db config', () => {
     const jestWotkerId = process.env.JEST_WORKER_ID;
     const nodeEnv = process.env.NODE_ENV;
     process.env.JEST_WORKER_ID = '';
@@ -35,9 +44,9 @@ describe('DynamoDBConnection Tests', () => {
 
     const options = getDbOptions();
 
-    expect(options).toMatchObject({});
+    expect(options).toMatchObject(defaultDbOptions);
 
     process.env.JEST_WORKER_ID = jestWotkerId;
-    process.env.NODE_ENV = nodeEnv;
+    process.env.JEST_WORKER_ID = nodeEnv;
   });
 });

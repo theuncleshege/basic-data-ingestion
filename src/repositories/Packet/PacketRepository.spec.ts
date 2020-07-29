@@ -1,22 +1,24 @@
 import PacketRepository from '@Repositories/Packet/PacketRepository';
 import { mocked } from 'ts-jest/utils';
-import DynamoDBConnection from '@DBConnections/DynamoDB/DynamoDBConnection';
+import PostgreSQLDBConnection from '@DBConnections/PostgreSQLDB/PostgreSQLDBConnection';
 
-jest.mock('@DBConnections/DynamoDB/DynamoDBConnection');
+jest.mock('@DBConnections/PostgreSQLDB/PostgreSQLDBConnection');
 
-const mockedDynamoDBConnection = mocked(DynamoDBConnection, true);
+const mockedPostgreSQLDBConnection = mocked(PostgreSQLDBConnection, true);
 
 describe('PacketRepository Tests', () => {
   let packetRepository: PacketRepository;
   const tableName: string = process.env.PACKET_TABLE || '';
 
   beforeEach(() => {
-    mockedDynamoDBConnection.mockClear();
-    mockedDynamoDBConnection.prototype.create.mockClear();
-    mockedDynamoDBConnection.prototype.get.mockClear();
-    mockedDynamoDBConnection.prototype.query.mockClear();
+    mockedPostgreSQLDBConnection.mockClear();
+    mockedPostgreSQLDBConnection.prototype.create.mockClear();
+    mockedPostgreSQLDBConnection.prototype.get.mockClear();
+    mockedPostgreSQLDBConnection.prototype.query.mockClear();
 
-    packetRepository = new PacketRepository(mockedDynamoDBConnection.prototype);
+    packetRepository = new PacketRepository(
+      mockedPostgreSQLDBConnection.prototype,
+    );
   });
 
   it('should use default table name when table environment variable is empty', async () => {
@@ -30,12 +32,12 @@ describe('PacketRepository Tests', () => {
     };
 
     const packetRepositoryDefaultTableName = new PacketRepository(
-      mockedDynamoDBConnection.prototype,
+      mockedPostgreSQLDBConnection.prototype,
     );
 
     await packetRepositoryDefaultTableName.get(query);
 
-    const dbGetMethod = mockedDynamoDBConnection.prototype.query;
+    const dbGetMethod = mockedPostgreSQLDBConnection.prototype.query;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
     expect(dbGetMethod).toHaveBeenCalledWith({ tableName: 'packet', ...query });
 
@@ -43,6 +45,9 @@ describe('PacketRepository Tests', () => {
   });
 
   it("should call the database connection's query method", async () => {
+    const packetTable = process.env.PACKET_TABLE;
+    process.env.PACKET_TABLE = 'packet';
+
     const query = {
       sensorId: 'device-123456',
       since: 1594635566018,
@@ -51,12 +56,17 @@ describe('PacketRepository Tests', () => {
 
     await packetRepository.get(query);
 
-    const dbGetMethod = mockedDynamoDBConnection.prototype.query;
+    const dbGetMethod = mockedPostgreSQLDBConnection.prototype.query;
     expect(dbGetMethod).toHaveBeenCalledTimes(1);
     expect(dbGetMethod).toHaveBeenCalledWith({ tableName, ...query });
+
+    process.env.PACKET_TABLE = packetTable;
   });
 
   it("should call the database connection's save method", async () => {
+    const packetTable = process.env.PACKET_TABLE;
+    process.env.PACKET_TABLE = 'packet';
+
     const data = {
       sensorId: 'device-123456',
       time: 1594635566018,
@@ -65,8 +75,10 @@ describe('PacketRepository Tests', () => {
 
     await packetRepository.save(data);
 
-    const dbSaveMethod = mockedDynamoDBConnection.prototype.create;
+    const dbSaveMethod = mockedPostgreSQLDBConnection.prototype.create;
     expect(dbSaveMethod).toHaveBeenCalledTimes(1);
     expect(dbSaveMethod).toHaveBeenCalledWith({ tableName, ...data });
+
+    process.env.PACKET_TABLE = packetTable;
   });
 });

@@ -1,3 +1,3 @@
-import storeFactoryFunction from './store';
+import { storeThresholdWithServerless } from './store';
 
-export const store = storeFactoryFunction;
+export const store = storeThresholdWithServerless;

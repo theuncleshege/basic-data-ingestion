@@ -1,5 +1,5 @@
-import storeFactoryFunction from './store';
-import getFactoryFunction from './get';
+import { storePacketWithServerless } from './store';
+import { getPacketWithServerless } from './get';
 
-export const store = storeFactoryFunction;
-export const get = getFactoryFunction;
+export const store = storePacketWithServerless;
+export const get = getPacketWithServerless;
