@@ -7,7 +7,7 @@ describe('PostgreSQLDBConnection Tests', () => {
     port: 5432,
     username: 'postgres',
     password: 'root',
-    database: 'backendexercise',
+    database: 'basicdataingestion',
     logging: false,
   };
 

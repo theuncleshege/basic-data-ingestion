@@ -1,0 +1,121 @@
+service:
+  name: basic-data-ingestion-api
+
+plugins:
+  - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline-sns
+  - serverless-offline
+  - offline-invalidate
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: v1
+  region: eu-west-2
+  profile: ${file(./.env.yml):AWS_PROFILE}
+  environment: ${file(./.env.yml)}
+  apiGateway:
+    minimumCompressionSize: 1024
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - { 'Fn::GetAtt': ['PacketDynamoDbTable', 'Arn'] }
+        - { 'Fn::GetAtt': ['ThresholdDynamoDbTable', 'Arn'] }
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: '*'
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    packager: 'yarn'
+    excludeFiles:
+      - src/**/*.test.ts
+      - src/**/*.spec.ts
+      - src/**/*.test.js
+      - src/**/*.spec.js
+  dynamodb:
+    stages:
+      - ${self:provider.stage}
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+  serverless-offline-sns:
+    port: 8001
+    debug: false
+
+functions:
+  store:
+    handler: src/functions/data/index.store
+    events:
+      - http:
+          method: put
+          path: data
+
+  get:
+    handler: src/functions/data/index.get
+    events:
+      - http:
+          method: get
+          path: data/{sensorId}
+          request:
+            parameters:
+              querystrings:
+                since: true
+              paths:
+                until: true
+
+  threshold:
+    handler: src/functions/threshold/index.store
+    events:
+      - http:
+          method: post
+          path: threshold
+
+resources:
+  Resources:
+    PacketDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: sensorId
+            AttributeType: S
+
+          - AttributeName: time
+            AttributeType: N
+        KeySchema:
+          - AttributeName: sensorId
+            KeyType: HASH
+
+          - AttributeName: time
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(./.env.yml):PACKET_TABLE}
+    ThresholdDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: sensorId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sensorId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${file(./.env.yml):THRESHOLD_TABLE}
